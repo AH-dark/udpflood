@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"time"
 	"udpflood/attack"
 )
 
@@ -11,6 +12,7 @@ var (
 	_port    uint
 	_threads uint64
 	_size    uint64
+	_time    uint
 )
 
 func init() {
@@ -18,6 +20,7 @@ func init() {
 	flag.UintVar(&_port, "p", 8080, "port")
 	flag.Uint64Var(&_threads, "t", 100, "threads")
 	flag.Uint64Var(&_size, "s", 65507, "packet size")
+	flag.UintVar(&_time, "time", 10, "time")
 	flag.Parse()
 }
 
@@ -26,6 +29,7 @@ func main() {
 	fmt.Printf("port: %d\n", _port)
 	fmt.Printf("threads: %d\n", _threads)
 	fmt.Printf("size: %d\n", _size)
+	fmt.Printf("time duration: %ds\n", _time)
 	fmt.Print("Attack started...\n")
 
 	fullAddr := fmt.Sprintf("%s:%d", _host, _port)
@@ -35,5 +39,12 @@ func main() {
 		return
 	}
 
-	<-make(chan bool, 1)
+	times := time.After(time.Second * time.Duration(_time))
+
+	select {
+	case <-make(chan bool, 1):
+	case <-times:
+		fmt.Printf("Attack finished\n")
+		return
+	}
 }
