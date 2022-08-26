@@ -19,8 +19,7 @@ func Attack(addr string, threads uint64, size uint64) error {
 	for i = 0; i < threads; i++ {
 		go func() {
 			for {
-				//goland:noinspection GoUnhandledErrorResult
-				conn.Write(buff)
+				_, _ = conn.Write(buff)
 			}
 		}()
 	}
